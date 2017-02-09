@@ -1,0 +1,89 @@
+var Move=React.createClass({
+	getInitialState:function(){
+		//初始化
+	return {top:0,left:0,isDragging:false,oldX:0,oldY:0}
+	},
+	// 鼠标按下
+	handleMouseDown(event){
+		// 获取鼠标按下的坐标
+		var e = event || window.event; 
+	    var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft; 
+	    var scrollY = document.documentElement.scrollTop || document.body.scrollTop; 
+	    var x = e.pageX || e.clientX + scrollX; 
+	    var y = e.pageY || e.clientY + scrollY; 
+	    // 计算出鼠标按下的时候鼠标在组件的位置
+	    var oldx=x-this.state.left
+	    var oldy=y-this.state.top
+	    // 修改数据	   
+		this.setState({
+			isDragging:true,
+			oldX :oldx,
+			oldY :oldy
+		})
+	},
+	 // 移动函数
+	handleMouseMove(event){
+		
+		 if(this.state.isDragging==true){
+		 	//获取移动的坐标
+		  var e = event || window.event; 
+	      var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft; 
+	      var scrollY = document.documentElement.scrollTop || document.body.scrollTop; 
+	      var x = e.pageX || e.clientX + scrollX; 
+	      var y = e.pageY || e.clientY + scrollY; 
+	      	// 计算移动后的坐标
+	      var newleft=x-this.state.oldX
+	      var newtop=y-this.state.oldY
+	       // 判断临界值
+	      var width =document.body.scrollWidth; 
+	      var height =document.body.scrollHeight; 
+	    	
+	       if(newleft<=0){
+	    	newleft=0
+		    }else if(newleft>=width-100){
+				newleft=width-100
+		    }
+		    if(newtop<=0){
+		    	newtop=0
+		    }else if(newtop>=height-100){
+		    	newtop=height-100
+		    }
+		    // 修改数据
+	      this.onChildChanged1(newleft,newtop)
+		 }		  
+	},
+	// 鼠标起来的函数 修改为false 停止移动函数
+	handleMouseUp(e){
+		
+		this.setState({isDragging:false})
+		
+	},
+	// 鼠标离开函数 防止移动过快
+	handleMouseLeave(){
+		this.setState({isDragging:false})
+
+	},
+		// 修改数据
+	onChildChanged1(newleft,newtop){
+		
+
+		this.setState({top:newtop,left:newleft});
+	},
+	
+	render(){
+		var top =this.state.top
+		var left =this.state.left
+
+		
+		return(
+			<div className="box" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseLeave={this.handleMouseLeave} onMouseUp={this.handleMouseUp} ref="one" style={{"top":top+"px","left":left+"px"}}>拖动</div>
+		)
+		
+	}
+	
+})
+
+ReactDOM.render(
+	<Move/>,
+	document.getElementById('text')
+	)
